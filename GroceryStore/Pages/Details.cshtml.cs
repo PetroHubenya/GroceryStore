@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using GroceryStore.Models;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace GroceryStore.Pages
 {
@@ -16,14 +17,10 @@ namespace GroceryStore.Pages
 
 		public GroceryItem CurrentFood;
 
+		[BindProperty]
 		public int Quantity { get; set; }
 
-		public double TotalPrice {
-			get
-			{
-				return Quantity * CurrentFood.Price;
-			} 
-		}
+		public double TotalPrice { get; set; }
 
 		public async Task<IActionResult> OnGetAsync(string name)
 		{
@@ -34,12 +31,21 @@ namespace GroceryStore.Pages
 
 			CurrentFood = Foods.Find(food => food.Name.ToLower() == name.ToLower());
 
+			TotalPrice = Quantity * CurrentFood.Price;
+
 			if (CurrentFood == null )
 			{
 				return NotFound();
 			}			
 
 			return Page();
+		}
+
+		public void OnPost(string name)
+		{
+			CurrentFood = Foods.Find(food => food.Name.ToLower() == name.ToLower());
+
+			TotalPrice = Quantity * CurrentFood.Price;
 		}
 	}
 }
